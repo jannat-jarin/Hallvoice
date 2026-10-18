@@ -1,0 +1,12 @@
+node_modules/
+.venv/
+.venv-d/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+dist/
+*.sqlite3
+media/
+frontend - Copy/
