@@ -182,3 +182,25 @@
     border-right-color: var(--border);
   }
 }
+
+.login-field {
+  margin: 24px auto 0;
+  width: 100%;
+  max-width: 360px;
+  text-align: left;
+}
+
+.login-field label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.login-field input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #9ca3af;
+  border-radius: 8px;
+  background-color: white;
+  color: #14352f;
+}
