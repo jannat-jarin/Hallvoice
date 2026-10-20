@@ -20,12 +20,14 @@ function App() {
   return (
     <>
       
-       <form id="center" onSubmit={handleLogin}>
+       
+        <div className="login-layout">
         <img
   src="/assets/hall.jpeg"
   alt="Pust ganatantra hall"
   className="hall-photo"
 />
+<form id="center" onSubmit={handleLogin}>
          <div className="login-content">
         <h1 className="login-title">HallVoice</h1>
         <p>Report a problem. Track it to resolution.</p>
@@ -74,6 +76,9 @@ onChange={(event) => {
 </button>
 <p role="status">{message}</p>
 </form>
+</div>
+
+
 <section className="contact-section">
   <h2>Contact Us</h2>
   <p>
