@@ -8,14 +8,35 @@ function App() {
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [message, setMessage] = useState("")
- function handleLogin(event) {
+ async function handleLogin(event) {
   event.preventDefault()
   if (!identifier.trim() || !password) {
     setMessage("Enter your email or user ID and password.")
     return
   }
+setMessage("Checking credentials...")
 
-  setMessage("Fields are filled. Login verification is not connected yet.")
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        identifier: identifier.trim(),
+        password: password,
+      }),
+    })
+
+    const data = await response.json()
+
+    setMessage(
+      data.message ||
+      (response.ok ? "Credentials verified." : "Login failed.")
+    )
+  } catch {
+    setMessage("Cannot connect to the server. Check that Django is running.")
+  }
 }
   return (
     <>
