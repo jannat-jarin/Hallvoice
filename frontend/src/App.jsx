@@ -17,11 +17,23 @@ function App() {
 setMessage("Checking credentials...")
 
   try {
+    const csrfResponse = await fetch("http://127.0.0.1:8000/api/csrf/", {
+  credentials: "include",
+})
+
+if (!csrfResponse.ok) {
+  setMessage("Could not prepare login. Please try again.")
+  return
+}
+
+const csrfData = await csrfResponse.json()
     const response = await fetch("http://127.0.0.1:8000/api/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+     method: "POST",
+credentials: "include",
+headers: {
+  "Content-Type": "application/json",
+  "X-CSRFToken": csrfData.csrfToken,
+},
       body: JSON.stringify({
         identifier: identifier.trim(),
         password: password,
