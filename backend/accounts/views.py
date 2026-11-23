@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.middleware.csrf import get_token
-from django.views.decorators.http import require_GET
-from django.contrib.auth import login
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_protect
 def api_status(request):
     return JsonResponse({
@@ -53,4 +53,12 @@ def session_view(request):
             "username": request.user.username,
             "role": request.user.role,
         },
+    })
+@require_POST
+@csrf_protect
+def logout_view(request):
+    logout(request)
+
+    return JsonResponse({
+        "message": "Logged out successfully."
     })

@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
@@ -8,6 +8,42 @@ function App() {
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [message, setMessage] = useState("")
+  const [user, setUser] = useState(null)
+  const [checkingSession, setCheckingSession] = useState(true)
+
+useEffect(() => {
+  const controller = new AbortController()
+
+  async function checkSession() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/session/",
+        {
+          credentials: "include",
+          signal: controller.signal,
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error("Session check failed")
+      }
+
+      const data = await response.json()
+
+      setUser(data.isAuthenticated ? data.user : null)
+      setCheckingSession(false)
+    } catch {
+      if (controller.signal.aborted) return
+
+      setMessage("Could not check your session. Please refresh.")
+      setCheckingSession(false)
+    }
+  }
+
+  checkSession()
+
+  return () => controller.abort()
+}, [])
  async function handleLogin(event) {
   event.preventDefault()
   if (!identifier.trim() || !password) {
@@ -41,6 +77,12 @@ headers: {
     })
 
     const data = await response.json()
+    if (response.ok) {
+  setUser(data.user)
+  setPassword("")
+  setMessage("")
+  return
+}
 
     setMessage(
       data.message ||
@@ -49,6 +91,61 @@ headers: {
   } catch {
     setMessage("Cannot connect to the server. Check that Django is running.")
   }
+}
+async function handleLogout() {
+  setMessage("")
+
+  try {
+    const csrfResponse = await fetch(
+      "http://127.0.0.1:8000/api/csrf/",
+      { credentials: "include" }
+    )
+
+    if (!csrfResponse.ok) {
+      throw new Error("Could not prepare logout")
+    }
+
+    const csrfData = await csrfResponse.json()
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/logout/",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-CSRFToken": csrfData.csrfToken,
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error("Logout failed")
+    }
+
+    setUser(null)
+    setPassword("")
+    setMessage("Logged out successfully.")
+  } catch {
+    setMessage("Could not log out. Please try again.")
+  }
+}
+if (checkingSession) {
+  return <p role="status">Checking your session...</p>
+}
+if (user) {
+  return (
+    <main>
+      <h1>HallVoice Dashboard</h1>
+      <h2>Welcome, {user.username}!</h2>
+      <p>Role: {user.role}</p>
+
+      <button type="button" onClick={handleLogout}>
+        Log out
+      </button>
+
+      <p role="status">{message}</p>
+    </main>
+  )
 }
   return (
     <>

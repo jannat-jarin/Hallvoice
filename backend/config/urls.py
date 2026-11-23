@@ -20,6 +20,7 @@ from accounts.views import (
     login_view,
     csrf_token_view,
     session_view,
+    logout_view,
 )
 from django.contrib import admin
 from django.urls import path
@@ -31,4 +32,5 @@ urlpatterns = [
     path('api/login/', login_view, name='api-login'),
     path('api/csrf/', csrf_token_view, name='api-csrf'),
     path('api/session/', session_view, name='api-session'),
+    path('api/logout/', logout_view, name='api-logout'),
 ]
