@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import './App.css'
+import StudentDashboard from './StudentDashboard'
 
 function App() {
   
@@ -134,17 +135,11 @@ if (checkingSession) {
 }
 if (user) {
   return (
-    <main>
-      <h1>HallVoice Dashboard</h1>
-      <h2>Welcome, {user.username}!</h2>
-      <p>Role: {user.role}</p>
-
-      <button type="button" onClick={handleLogout}>
-        Log out
-      </button>
-
-      <p role="status">{message}</p>
-    </main>
+    <StudentDashboard
+      user={user}
+      onLogout={handleLogout}
+      message={message}
+    />
   )
 }
   return (
